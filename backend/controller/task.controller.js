@@ -17,18 +17,34 @@ export const createTask = async (req, res) => {
     }
 };
 
-export const getTasks = async (req, res) => {
+export const getUnarchivedTasks = async (req, res) => {
     const userId = req.user.id;
     try {
         if (!userId) {
             return res.status(400).json({ message: 'User ID is required to fetch tasks' });
         }
-        const tasks = await Task.findAll({ where: { userId } });
+        const tasks = await Task.findAll({ where: { userId, archived: false }});
         res.status(200).json({ tasks });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching tasks', error: error.message });
     }
 };
+
+export const getArchivedTasks = async (req, res) => {
+    const userId = req.user.id;
+    try {
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is required to fetch tasks' });
+        }
+        const tasks = await Task.findAll({ where: { userId, archived: true }});
+        res.status(200).json({ tasks });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching tasks', error: error.message });
+    }
+};
+
+
+
 
 export const updateTask = async (req, res) => {
     const { title, description, status, deadline } = req.body;
@@ -45,7 +61,7 @@ export const updateTask = async (req, res) => {
     }
 };
 
-export const archivedTask = async (req, res) => {
+export const archiveTask = async (req, res) => {
     const taskId = req.params.id;
     try {
         const task = await Task.findByPk(taskId);
@@ -56,6 +72,20 @@ export const archivedTask = async (req, res) => {
         res.status(200).json({ message: 'Task archived successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error archiving task', error: error.message });
+    }
+};
+
+export const unarchiveTask = async (req, res) => {
+    const taskId = req.params.id;
+    try {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+        await task.update({ archived: false });
+        res.status(200).json({ message: 'Task unarchived successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error unarchiving task', error: error.message });
     }
 };
 

@@ -1,5 +1,5 @@
 import sequelize from "../db.js";
-import { DataTypes } from "sequelize";
+import { DataTypes} from "sequelize";
 
 const Task = sequelize.define('Task', {
     id: {
@@ -35,7 +35,12 @@ const Task = sequelize.define('Task', {
     archived:{
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+    },
+    notificationSent: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
     }
 });
+
 
 export default Task;
