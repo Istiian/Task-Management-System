@@ -1,15 +1,17 @@
 import passport from "passport";
 import {Strategy as JWTStrategy, ExtractJwt} from "passport-jwt";
-import {User} from "../models/user.js";
+import User from './models/user.js';
 
 const opts = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET,
+    jwtFromRequest: ExtractJwt.fromExtractors([(req) => {
+        return req.cookies.accessToken;
+    }]),
+    secretOrKey: process.env.ACCESS_TOKEN_SECRET,
 };
 
 passport.use(new JWTStrategy(opts, async (payload, done) => {
     try {
-        const user = await User.findById(payload.id);
+        const user = await User.findByPk(payload.id);
         if (user) {
             return done(null, user);
         }

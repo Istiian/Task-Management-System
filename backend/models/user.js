@@ -15,17 +15,21 @@ const User = sequelize.define('User', {
     password: {
         type: DataTypes.STRING,
         allowNull: false,
+        minLength: 9
     },
     email:{
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
+    },
+    firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    lastName: {
+        type: DataTypes.STRING,
+        allowNull: false,
     }
 });
-
-(async () => {
-    await sequelize.sync({ force: false });
-    console.log('User table has been created.');
-})();
 
 export default User;

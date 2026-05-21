@@ -9,12 +9,11 @@ export const hashPassword = (password) => {
     return hash;
 }
 
-export const generateToken = (user) => {
-    return jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+export const generateAccessToken = (user) => {
+    return jwt.sign({ id: user.id, username: user.username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 }
-
-export const generateResetToken = (user) => {
-    return jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '15m' });
+export const generateRefreshToken = (user) => {
+    return jwt.sign({ id: user.id, username: user.username }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 }
 
 export const generateOTP = () => {
