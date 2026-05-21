@@ -18,7 +18,7 @@ This repository contains the backend for the Personal Task Tracker application. 
 ## Installation
 1. Clone the repository:
 	```bash
-	https://github.com/Istiian/Personal-Task-Tracker.git
+	git clone https://github.com/Istiian/Personal-Task-Tracker.git
 	cd backed
 	```
 2. Install dependencies:
