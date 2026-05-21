@@ -5,7 +5,7 @@ import User from '../models/user.js';
 import { Op } from 'sequelize';
 
 // Schedule a task to run every 30 minutes
-cron.schedule('*/30 * * * * *', async () => {
+cron.schedule('*/30 * * * *', async () => {
     console.log('Running scheduled task to send notifications...');
     const now = new Date();
     const fiveHoursFromNow = new Date(now.getTime() + 5 * 60 * 60 * 1000);
