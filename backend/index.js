@@ -7,13 +7,18 @@ import sequelize from './db.js';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import { rateLimit } from 'express-rate-limit'
+import User from './models/user.js';
+import Task from './models/task.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import taskRoutes from './routes/task.routes.js';
 import './passport.js';
-
+import './scheduler/notification.js';
 dotenv.config();
 const app = express();
+
+User.hasMany(Task, { foreignKey: 'userId' });
+Task.belongsTo(User, { foreignKey: 'userId', onDelete: 'CASCADE' });
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -30,7 +35,7 @@ app.use('/task', passport.authenticate('jwt', { session: false }), taskRoutes);
 try {
   await sequelize.authenticate();
   console.log('Connection has been established successfully.');
-  await sequelize.sync();
+  await sequelize.sync({alter: true});
   console.log('Database schema is in sync.');
 } catch (error) {
   console.error('Unable to connect to the database:', error);
