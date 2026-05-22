@@ -49,7 +49,7 @@ export const login = async (req, res) => {
         });
 
         redisClient.setEx(`refreshToken:${user.id}`, 604800, refreshToken); // Store the refreshToken in Redis with a 7-day expiration
-        res.json({ message: 'Login successful', accessToken, refreshToken });
+        res.json({ message: 'Login successful'});
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error: error.message });
     }
@@ -143,5 +143,20 @@ export const refreshToken = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: 'Error refreshing token', error: error.message });
+    }
+};
+
+export const logout = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (refreshToken) {
+            const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+            await redisClient.del(`refreshToken:${decoded.id}`); // Remove the refresh token from Redis
+        }
+        res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
+        res.json({ message: 'Logout successful' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error logging out', error: error.message });
     }
 };
