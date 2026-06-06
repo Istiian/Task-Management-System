@@ -3,22 +3,20 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import httpErrors from 'http-errors';
-import sequelize from './db.js';
+import sequelize from './src/config/db.js';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import { rateLimit } from 'express-rate-limit'
-import User from './models/user.js';
-import Task from './models/task.js';
-import authRoutes from './routes/auth.routes.js';
-import userRoutes from './routes/user.routes.js';
-import taskRoutes from './routes/task.routes.js';
-import './passport.js';
-import './scheduler/notification.js';
+import User from './src/models/user.js';
+import Task from './src/models/task.js';
+import './src/config/passport.js';
+import './src/models/relations.js';
+import authRoutes from './src/routes/auth.routes.js';
+import userRoutes from './src/routes/user.routes.js';
+import taskRoutes from './src/routes/task.routes.js';
+
 dotenv.config();
 const app = express();
-
-User.hasMany(Task, { foreignKey: 'userId' });
-Task.belongsTo(User, { foreignKey: 'userId', onDelete: 'CASCADE' });
 
 app.use(cors());
 app.use(bodyParser.json());

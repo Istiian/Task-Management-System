@@ -1,4 +1,4 @@
-import sequelize from "../db.js";
+import sequelize from '../config/db.js';
 import { DataTypes} from "sequelize";
 
 const Task = sequelize.define('Task', {
@@ -32,14 +32,20 @@ const Task = sequelize.define('Task', {
             key: 'id',
         },
     },
-    archived:{
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-    },
     notificationSent: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
-    }
+    },
+    projectId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        foreignKey: true,
+        references: {
+            model: 'Projects',
+            key: 'id',
+        },
+    },
+    
 });
 
 

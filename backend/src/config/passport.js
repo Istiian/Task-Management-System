@@ -1,12 +1,12 @@
 import passport from "passport";
 import {Strategy as JWTStrategy, ExtractJwt} from "passport-jwt";
-import User from './models/user.js';
+import User from '../models/user.js';
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromExtractors([(req) => {
         return req.cookies.accessToken;
     }]),
-    secretOrKey: process.env.ACCESS_TOKEN_SECRET,
+    secretOrKey: process.env.TOKEN_SECRET,
 };
 
 passport.use(new JWTStrategy(opts, async (payload, done) => {

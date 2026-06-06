@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import { sendEmail } from '../service/auth.service.js';
+import { sendEmail } from '../lib/nodemailer.js';
 import Task from "../models/task.js";
 import User from '../models/user.js';
 import { Op } from 'sequelize';
