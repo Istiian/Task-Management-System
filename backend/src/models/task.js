@@ -44,8 +44,9 @@ const Task = sequelize.define('Task', {
             model: 'Projects',
             key: 'id',
         },
-    },
-    
+    }
+},{
+    timestamps: true
 });
 
 

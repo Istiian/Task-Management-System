@@ -15,16 +15,6 @@ export const resetPasswordSchema = joi.object({
     otp: joi.string().length(6).required(),
 });
 
-export const changeInfoSchema = joi.object({
-    email: joi.string().email().required(),
-    firstName: joi.string().min(1).max(50),
-    lastName: joi.string().min(1).max(50),
-});
-
-export const changePasswordSchema = joi.object({
-    currentPassword: joi.string().min(6).required().pattern(/^[a-zA-Z0-9]{6,30}$/),
-    newPassword: joi.string().min(9).required().pattern(/^[a-zA-Z0-9]{6,30}$/),
-    repeatNewPassword: joi.string().valid(joi.ref('newPassword')).required().messages({
-        'any.only': 'Repeat new password must match new password',
-    }),
+export const refreshTokenSchema = joi.object({
+    refreshToken: joi.string().required(),
 });

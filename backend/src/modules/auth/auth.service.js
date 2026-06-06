@@ -38,7 +38,7 @@ export const sendOTPEmail = async (email) => {
     }
 }
 
-export const resetPassword = async (req, res, resetData) => {
+export const resetPassword = async ( resetData) => {
     try {
         const user = await User.findOne({ where: { email: resetData.email } });
         if (!user) {
@@ -59,24 +59,25 @@ export const resetPassword = async (req, res, resetData) => {
     }
 }
 
-export const refreshToken = async (req, res) => {
-    const { refreshToken } = req.body;
+export const refreshToken = async (refreshToken) => {
+    
     if (!refreshToken) {
-        return res.status(400).json({ message: 'Refresh token is required' });
+        throw new Error('Refresh token is required');
     }
     try {
         const isVerified = verifyToken(refreshToken);
         if (!isVerified) {
-            return res.status(403).json({ message: 'Invalid refresh token' });
+            throw new Error('Invalid refresh token');
         }
         const userId = isVerified.id;
         const storedRefreshToken = await redisClient.get(`refreshToken:${userId}`);
+        
         if (storedRefreshToken !== refreshToken) {
-            return res.status(403).json({ message: 'Invalid refresh token' });
+            throw new Error('Invalid refresh token');
         }
         const user = await User.findByPk(userId);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            throw new Error('User not found');
         }
         const newAccessToken = generateAccessToken(user);
         const newRefreshToken = generateRefreshToken(user);

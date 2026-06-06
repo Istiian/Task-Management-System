@@ -3,9 +3,7 @@ import {Strategy as JWTStrategy, ExtractJwt} from "passport-jwt";
 import User from '../models/user.js';
 
 const opts = {
-    jwtFromRequest: ExtractJwt.fromExtractors([(req) => {
-        return req.cookies.accessToken;
-    }]),
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.TOKEN_SECRET,
 };
 

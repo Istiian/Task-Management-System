@@ -1,34 +1,34 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 
-const Project = sequelize.define('Project', {
+const Comment = sequelize.define('Comment', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true,
+        primaryKey: true
     },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    description: {
+    content: {
         type: DataTypes.TEXT,
-        allowNull: true,
+        allowNull: false
     },
-    status: {
-        type: DataTypes.ENUM('active', 'archived'),
-        defaultValue: 'active'
-    },
-    ownerId: {
+    authorId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: 'Users',
             key: 'id'
-        },
+        }
+    },
+    taskId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'Tasks',
+            key: 'id'
+        }
     }
 }, {
     timestamps: true
 });
 
-export default Project;
+export default Comment;

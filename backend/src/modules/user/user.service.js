@@ -1,5 +1,6 @@
 import User from '../../models/user.js';
 import { comparePassword, hashPassword } from '../../lib/bcrypt.js';
+import { UniqueConstraintError } from 'sequelize';
 
 export const changeInfo = async (userData, userId) => {
     const { firstName, lastName, email } = userData;
@@ -11,9 +12,13 @@ export const changeInfo = async (userData, userId) => {
 
         user.firstName = firstName || user.firstName;
         user.lastName = lastName || user.lastName;
+        user.email = email || user.email;
         await user.save();
         return { message: 'User information updated successfully', user };
     } catch (error) {
+        if (error instanceof UniqueConstraintError) {
+            throw new Error('Email already in use');
+        }
         throw new Error('Error updating user information');
     }
 };
@@ -43,10 +48,15 @@ export const changePassword = async (passwordData, userId) => {
 
 export const registerUser = async (userData) => {
     try {
+        const checkEmail = await User.findOne({ where: { email: userData.email } });
+        
         const hashedPassword = hashPassword(userData.password);
         const user = await User.create({ ...userData, password: hashedPassword });
         return user;
     } catch (error) {
+        if (error instanceof UniqueConstraintError) {
+            throw new Error('Email or username already in use');
+        }
         throw new Error('Error registering user');
     }
 }

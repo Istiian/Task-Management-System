@@ -2,7 +2,8 @@ import { loginUser, sendOTPEmail, resetPassword, refreshToken, deleteToken } fro
 
 export const loginHandler = async (req, res) => {
     try {
-        const tokens = await loginUser(req.body);
+        const {username, password} = req.body;
+        const tokens = await loginUser({username, password});
         res.status(200).json({ message: 'Login successful', ...tokens });
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error: error.message });
@@ -21,7 +22,8 @@ export const sendOTPEmailHandler = async (req, res) => {
 
 export const resetPasswordHandler = async (req, res) => {
     try {
-        await resetPassword(req, res, req.body);
+        const { email, otp, newPassword } = req.body;
+        await resetPassword({ email, otp, newPassword });
         res.status(200).json({ message: 'Password reset successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error resetting password', error: error.message });
@@ -30,7 +32,9 @@ export const resetPasswordHandler = async (req, res) => {
 
 export const refreshTokenHandler = async (req, res) => {
     try {
-        const token = await refreshToken(req, res);
+        const headerToken = req.headers.authorization.split(' ')[1];
+        console.log('Received refresh token:', headerToken);
+        const token = await refreshToken(headerToken);
         res.status(200).json({ message: 'Token refreshed successfully', token });
     } catch (error) {
         res.status(500).json({ message: 'Error refreshing token', error: error.message });

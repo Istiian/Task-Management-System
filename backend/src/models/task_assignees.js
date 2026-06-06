@@ -1,34 +1,31 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 
-const Project = sequelize.define('Project', {
+const taskAssignees = sequelize.define('TaskAssignees', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
     },
-    name: {
-        type: DataTypes.STRING,
+    taskId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: 'Tasks',
+            key: 'id',
+        },
     },
-    description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-    },
-    status: {
-        type: DataTypes.ENUM('active', 'archived'),
-        defaultValue: 'active'
-    },
-    ownerId: {
+    userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: 'Users',
-            key: 'id'
+            key: 'id',
         },
-    }
+    },
+    
 }, {
     timestamps: true
 });
 
-export default Project;
+export default taskAssignees;
