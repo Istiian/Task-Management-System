@@ -14,7 +14,7 @@ import './src/models/relations.js';
 import authRoutes from './src/modules/auth/auth.routes.js';
 import userRoutes from './src/modules/user/user.routes.js';
 import projectRoutes from './src/modules/project/project.routes.js';
-// import taskRoutes from './src/routes/task.routes.js';
+import taskRoutes from './src/modules/task/task.routes.js';
 
 dotenv.config();
 const app = express();
@@ -28,7 +28,7 @@ app.use(passport.initialize());
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/project', passport.authenticate('jwt', { session: false }), projectRoutes);
-// app.use('/task', passport.authenticate('jwt', { session: false }), taskRoutes);
+app.use('/task', taskRoutes);
 
 
 // Test the database connection

@@ -4,6 +4,7 @@ import Project from './project.js';
 import Comment from './comment.js'
 import TaskAssignees from './task_assignees.js';
 import ProjectMembers from './project_member.js';
+
 // User-Task (One-to-Many)
 User.hasMany(Task, { foreignKey: 'userId', as: 'tasks' });
 Task.belongsTo(User, { foreignKey: 'userId', as: 'user' });

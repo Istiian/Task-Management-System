@@ -23,15 +23,6 @@ const Task = sequelize.define('Task', {
         type: DataTypes.DATE,
         allowNull: true,
     },
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        foreignKey: true,
-        references: {
-            model: 'Users',
-            key: 'id',
-        },
-    },
     notificationSent: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
