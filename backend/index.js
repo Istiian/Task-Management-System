@@ -15,7 +15,8 @@ import authRoutes from './src/modules/auth/auth.routes.js';
 import userRoutes from './src/modules/user/user.routes.js';
 import projectRoutes from './src/modules/project/project.routes.js';
 import taskRoutes from './src/modules/task/task.routes.js';
-
+import commentRoutes from './src/modules/comment/comment.routes.js';
+import './src/scheduler/notification.js';
 dotenv.config();
 const app = express();
 
@@ -29,6 +30,8 @@ app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/project', passport.authenticate('jwt', { session: false }), projectRoutes);
 app.use('/task', taskRoutes);
+app.use('/comment', commentRoutes);
+
 
 
 // Test the database connection
