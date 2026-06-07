@@ -30,10 +30,22 @@ export const loginUser = async (loginData) => {
 
 export const sendOTPEmail = async (email) => {
     try {
+        const isUserExist = await User.findOne({ where: { email } });
+        console.log('User existence check for email:', email, 'Result:', !!isUserExist);
+        if (!isUserExist) {
+            throw new Error('User with this email does not exist');
+        }
+        
+        const isOTPExist = await redisClient.get(`otp:${email}`);
+        console.log('OTP existence check for email:', email, 'Result:', !!isOTPExist);
+        if (isOTPExist) {
+            throw new Error('OTP already sent. Please wait before requesting a new one.');
+        }
         const otp = crypto.randomInt(100000, 999999).toString();
         await sendEmail(email, 'Your OTP Code', `Your OTP code is: ${otp}`);
         redisClient.setEx(`otp:${email}`, 300, otp); // Store OTP in Redis with a 5-minute expiration
     } catch (error) {
+        console.error('Error sending OTP email:', error);
         throw new Error('Error sending OTP');
     }
 }

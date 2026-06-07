@@ -12,7 +12,8 @@ export const loginHandler = async (req, res) => {
 
 export const sendOTPEmailHandler = async (req, res) => {
     try {
-        await sendOTPEmail(req.body.email);
+        const { email } = req.body;
+        await sendOTPEmail(email);
         res.status(200).json({ message: 'OTP sent successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error sending OTP', error: error.message });
