@@ -10,7 +10,7 @@ import {
     unassignTaskFromUser
 } from './task.service.js';
 
-export const createTaskController = async (req, res) => {
+export const createTaskController = async (req, res, next) => {
     try{
         const taskData = req.body;
         const task = await createTask(taskData);
@@ -21,11 +21,11 @@ export const createTaskController = async (req, res) => {
             task
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 }
 
-export const getTasksController = async (req, res) => {
+export const getTasksController = async (req, res, next) => {
     try {
         const projectId = req.params.projectId;
         const filter = req.query; // e.g., ?status=pending
@@ -36,11 +36,11 @@ export const getTasksController = async (req, res) => {
             tasks
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 }
 
-export const updateTaskController = async (req, res) => {
+export const updateTaskController = async (req, res, next) => {
     try {
         const taskId = req.params.taskId;
         const taskData = req.body;
@@ -52,11 +52,11 @@ export const updateTaskController = async (req, res) => {
             task
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 }
 
-export const deleteTaskController = async (req, res) => {
+export const deleteTaskController = async (req, res, next) => {
     try {
         const taskId = req.params.taskId;
         await deleteTask(taskId);
@@ -65,32 +65,29 @@ export const deleteTaskController = async (req, res) => {
             message: 'Task deleted successfully'
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 }
 
-export const getTaskByIdController = async (req, res) => {
+export const getTaskByIdController = async (req, res, next) => {
     try {
         const taskId = req.params.taskId;
-        console.log('Fetching task with ID:', taskId);
+        
         const task = await getTaskById(taskId);
-        if (!task) {
-            return res.status(404).json({ message: 'Task not found' });
-        }
+       
         res.status(200).json({
             success: true,
             message: 'Task fetched successfully',
             task
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 }
 
-export const getOverdueTasksController = async (req, res) => {
+export const getOverdueTasksController = async (req, res, next) => {
     try {
         const projectId = req.params.projectId;
-        console.log('Fetching overdue tasks for project ID:', projectId);
         const overdueTasks = await getOverdueTasks(projectId);
         res.status(200).json({
             success: true,
@@ -98,13 +95,13 @@ export const getOverdueTasksController = async (req, res) => {
             overdueTasks
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 }
 
-export const getUserTasksController = async (req, res) => {
+export const getUserTasksController = async (req, res, next) => {
     try {
-        const userId = 3; // Assuming user ID is available in req.user
+        const userId = req.user.id; // Assuming user ID is available in req.user
         const tasks = await getUserTasks(userId);
         res.status(200).json({
             success: true,
@@ -112,11 +109,11 @@ export const getUserTasksController = async (req, res) => {
             tasks
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 }
 
-export const assignTaskToUserController = async (req, res) => {
+export const assignTaskToUserController = async (req, res, next) => {
     try {
         const taskId = req.params.taskId;
         const { userId } = req.body;
@@ -126,11 +123,11 @@ export const assignTaskToUserController = async (req, res) => {
             message: 'Task assigned to user successfully'
         });
     } catch (error) {   
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 }
 
-export const unassignTaskFromUserController = async (req, res) => {
+export const unassignTaskFromUserController = async (req, res, next) => {
     try {
         const taskId = req.params.taskId;
         const { userId } = req.body;
@@ -140,6 +137,6 @@ export const unassignTaskFromUserController = async (req, res) => {
             message: 'Task unassigned from user successfully'
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 }

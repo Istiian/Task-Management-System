@@ -1,6 +1,6 @@
 import { changeInfo, changePassword, registerUser } from './user.service.js';
 
-export const changeInfoHandler = async (req, res) => {
+export const changeInfoHandler = async (req, res, next) => {
     const userId = req.params.id;
     const { firstName, lastName, email } = req.body;
 
@@ -8,27 +8,28 @@ export const changeInfoHandler = async (req, res) => {
         const result = await changeInfo({ firstName, lastName, email }, userId);
         res.status(200).json(result);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 };
 
-export const changePasswordHandler = async (req, res) => {
-    const userId = req.params.id;
+export const changePasswordHandler = async (req, res, next) => {
+    const userId = req.user.id;
     const { currentPassword, newPassword, repeatNewPassword } = req.body;
     try {
         const result = await changePassword({ currentPassword, newPassword, repeatNewPassword }, userId);
         res.status(200).json(result);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 };
 
-export const registerUserHandler = async (req, res) => {
+export const registerUserHandler = async (req, res, next) => {
     try {
-        const user = await registerUser(req.body);
-        res.status(201).json({ message: 'User registered successfully', user });
+        const userData = req.body;
+        const user = await registerUser(userData);
+        res.status(201).json({ message: 'User registered successfully'});
     } catch (error) {
-        res.status(500).json({ message: 'Error registering user', error: error.message });
+        next(error);
     }
 };
 

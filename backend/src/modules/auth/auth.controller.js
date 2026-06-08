@@ -1,22 +1,23 @@
 import { loginUser, sendOTPEmail, resetPassword, refreshToken, deleteToken } from './auth.service.js';
 
-export const loginHandler = async (req, res) => {
+export const loginHandler = async (req, res, next) => {
     try {
         const {username, password} = req.body;
         const tokens = await loginUser({username, password});
+        
         res.status(200).json({ message: 'Login successful', ...tokens });
     } catch (error) {
-        res.status(500).json({ message: 'Error logging in', error: error.message });
+        next(error);
     }
 };
 
-export const sendOTPEmailHandler = async (req, res) => {
+export const sendOTPEmailHandler = async (req, res, next) => {
     try {
         const { email } = req.body;
         await sendOTPEmail(email);
         res.status(200).json({ message: 'OTP sent successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Error sending OTP', error: error.message });
+        next(error);
     }
 };
 
