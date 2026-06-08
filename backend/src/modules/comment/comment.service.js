@@ -1,10 +1,8 @@
 import Comment from '../../models/comment.js';
+import { ApiError } from '../../util/apiError.js';
 
 export const createComment = async (content, authorId, taskId) => {
-    try {
-        const comment = await Comment.create({ content, authorId, taskId });
-        return comment;
-    } catch (error) {
-        throw new Error('Error creating comment: ' + error.message);
-    }
+    console.log('Creating comment with data:', { content, authorId, taskId });
+    const comment = await Comment.create({ content, authorId, taskId });
+    return comment;
 };

@@ -6,7 +6,7 @@ import { commentSchema } from './comment.validatior.js';
 import {validateForm} from '../../middleware/validateForm.js';
 const router = express.Router();
 
-router.post('/', validateForm(commentSchema), createCommentController);
+router.post('/', createCommentController);
 
 
 export default router;
