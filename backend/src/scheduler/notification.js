@@ -8,8 +8,8 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import timezone from 'dayjs/plugin/timezone.js';
 
-// Schedule a task to run every 30 second
-cron.schedule('*/30 * * * * *', async () => {
+// Schedule a task to run every 12 hours to check for tasks with deadlines within the next 24 hours and send notifications
+cron.schedule('0 */12 * * *', async () => {
     dayjs.extend(utc);
     dayjs.extend(timezone);
     try {
