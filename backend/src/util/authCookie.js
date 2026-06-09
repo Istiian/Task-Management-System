@@ -1,6 +1,8 @@
 const REFRESH_TOKEN_COOKIE = 'refreshToken';
-const REFRESH_TOKEN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+const REFRESH_TOKEN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
+// httpOnly prevents JS access; path '/auth' limits the cookie to auth endpoints only.
+// secure is enabled in production so the cookie is only sent over HTTPS.
 const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -19,4 +21,5 @@ export const clearRefreshTokenCookie = (res) => {
     res.clearCookie(REFRESH_TOKEN_COOKIE, cookieOptions);
 };
 
+// Reads the refresh token from the incoming request cookie
 export const getRefreshTokenFromRequest = (req) => req.cookies?.[REFRESH_TOKEN_COOKIE];

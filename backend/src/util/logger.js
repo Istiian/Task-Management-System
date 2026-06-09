@@ -1,5 +1,9 @@
 import winston from 'winston';
 
+// Application-wide logger with three transports:
+//   - Console: colorised output for development
+//   - combined.log: all log levels in JSON
+//   - error.log: errors only in JSON
 export const logger = winston.createLogger({
     level: 'info',
     format: winston.format.combine(
@@ -7,7 +11,6 @@ export const logger = winston.createLogger({
         winston.format.errors({ stack: true }),
         winston.format.json()
     ),
-
     transports: [
         new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
         new winston.transports.File({ filename: 'logs/combined.log' }),
@@ -17,7 +20,8 @@ export const logger = winston.createLogger({
                 winston.format.simple(),
                 winston.format.printf(({ level, message, timestamp, stack }) => {
                     return `[${level}]: ${timestamp} ${stack || message}`;
-                }))
-        })
+                })
+            ),
+        }),
     ],
 });

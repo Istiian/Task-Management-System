@@ -3,6 +3,9 @@ import { ApiError } from '../util/apiError.js';
 import Project from '../models/project.js';
 import ProjectMember from '../models/project_member.js';
 
+// Middleware factory for project-level access control.
+// Pass the roles that are allowed to access the route: 'owner', 'admin', 'member'.
+// The owner is identified by project.ownerId; admins and members via ProjectMember.role.
 export const canAccessProject = (...roles) => {
     return async (req, res, next) => {
         const userId = req.user.id;
@@ -16,13 +19,9 @@ export const canAccessProject = (...roles) => {
         if (!project) {
             return next(new ApiError(404, 'Project not found'));
         }
-        
-        const projectMember = await ProjectMember.findOne({
-            where: {
-                projectId,
-                userId
-            }
-        });
+
+        // Check membership separately — owners may not have a ProjectMember row
+        const projectMember = await ProjectMember.findOne({ where: { projectId, userId } });
         const isOwner = project.ownerId === userId;
         const userRole = projectMember?.role || null;
 
@@ -33,7 +32,7 @@ export const canAccessProject = (...roles) => {
         if (!isApprovedOwner && !isApprovedAdmin && !isApprovedMember) {
             return next(new ApiError(403, 'Forbidden: You do not have access '));
         }
-        
+
         next();
-    }
-}
+    };
+};

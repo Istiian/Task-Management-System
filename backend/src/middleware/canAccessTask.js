@@ -4,6 +4,9 @@ import Project from '../models/project.js';
 import ProjectMember from '../models/project_member.js';
 import Task from '../models/task.js';
 
+// Middleware factory for task-level access control.
+// Resolves the parent project from the task, then applies the same owner/admin/member
+// role check used by canAccessProject.
 export const canAccessTask = (...roles) => {
     return async (req, res, next) => {
         const userId = req.user.id;
@@ -18,13 +21,10 @@ export const canAccessTask = (...roles) => {
         }
 
         try {
+            // Fetch task with its parent project to get ownerId and projectId
             const projectInfo = await Task.findOne({
                 where: { id: taskId },
-                include: [{
-                    model: Project,
-                    as: 'project',
-                    attributes: ['ownerId', 'id']
-                }]
+                include: [{ model: Project, as: 'project', attributes: ['ownerId', 'id'] }],
             });
 
             if (!projectInfo) {
@@ -33,9 +33,10 @@ export const canAccessTask = (...roles) => {
 
             const ownerId = projectInfo?.project?.ownerId;
             const projectId = projectInfo?.project?.id;
+
             const userRole = await ProjectMember.findOne({
                 where: { userId, projectId },
-                attributes: ['role']
+                attributes: ['role'],
             });
 
             const isOwner = userId === ownerId;
@@ -48,9 +49,10 @@ export const canAccessTask = (...roles) => {
             if (!isApprovedOwner && !isApprovedAdmin && !isApprovedMember) {
                 throw new ApiError(403, 'Forbidden: You do not have access ');
             }
+
             next();
         } catch (error) {
             next(error);
         }
-    }
-}
+    };
+};

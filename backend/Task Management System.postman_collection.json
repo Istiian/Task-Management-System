@@ -1,0 +1,1207 @@
+{
+  "info": {
+    "_postman_id": "60bf978c-99ec-4072-8539-70458094be0b",
+    "name": "Task Management System",
+    "description": "A comprehensive REST API collection for managing tasks, projects, and users. This collection covers authentication, user profile management, project lifecycle operations, and task tracking — including assignment, commenting, and status updates. Base URL: `http://localhost:3000`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51189345",
+    "_collection_link": "https://go.postman.co/collection/51189345-60bf978c-99ec-4072-8539-70458094be0b?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"Zhaoriiiiri\",\r\n    \"password\": \"Admin123456!!\",\r\n    \"email\": \"markchristianfdtourealaje@gmail.com\",\r\n    \"firstName\": \"Istian\",\r\n    \"lastName\": \"Forlaje\"\r\n}\r\n        "
+            },
+            "url": {
+              "raw": "{{URL}}/user/",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "user",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": null,
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Creates a new user account. Requires a username, email, and password in the request body. Returns the newly created user object on success."
+          },
+          "response": []
+        },
+        {
+          "name": "Change User Info",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"markchristianfouawrealaje@gmail.com\",\r\n    \"firstName\": \"Istian\",\r\n    \"lastName\": \"Forlaje\"\r\n}\r\n        "
+            },
+            "url": {
+              "raw": "{{URL}}/user/me",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "user",
+                "me"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Updates the authenticated user's profile information such as name or email. Requires a valid access token. Only the fields provided in the request body will be updated."
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"currentPassword\": \"Admin123456!!\",\r\n    \"newPassword\": \"Admin123456!!\",\r\n    \"repeatNewPassword\": \"Admin123456!!\"\r\n}\r\n        "
+            },
+            "url": {
+              "raw": "{{URL}}/user/me/password",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "user",
+                "me",
+                "password"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Updates the authenticated user's password. Requires the current password and the new password in the request body along with a valid access token."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User's Projects",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{URL}}/user/me/projects",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "user",
+                "me",
+                "projects"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "2"
+                },
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "status",
+                  "value": "archived"
+                }
+              ]
+            },
+            "description": "Retrieves a paginated list of projects associated with the authenticated user. Supports filtering by status (e.g., archived) and pagination via `limit` and `page` query parameters."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User's Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{URL}}/user/me/tasks",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "user",
+                "me",
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                }
+              ]
+            },
+            "description": "Retrieves a paginated list of tasks assigned to the authenticated user. Supports filtering by status (e.g., pending) and pagination via `limit` and `page` query parameters."
+          },
+          "response": []
+        }
+      ],
+      "description": "Contains endpoints for user account management. Covers user registration, updating profile information, changing passwords, and retrieving the authenticated user's tasks and projects. Most endpoints require a valid Bearer token."
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"markchristianforlaje@gmail.com\"\r\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/auth/password/reset-requests",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "auth",
+                "password",
+                "reset-requests"
+              ]
+            },
+            "description": "Initiates a password reset flow by sending a one-time password (OTP) to the user's registered email address."
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{refreshToken}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{URL}}/auth/tokens",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "auth",
+                "tokens"
+              ]
+            },
+            "description": "Generates a new access token using a valid refresh token. Use this endpoint to maintain an active session without requiring the user to log in again."
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"markchristianforlaje@gmail.com\",\r\n    \"otp\": \"525186\",\r\n    \"newPassword\": \"Admin12345!\",\r\n    \"repeatNewPassword\": \"Admin12345!\"\r\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/auth/password",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "auth",
+                "password"
+              ]
+            },
+            "description": "Resets the user's password using a valid OTP received via email. Requires the OTP and the new password in the request body."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"Zhaori\",\r\n    \"password\": \"Admin12345\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{URL}}/auth/sessions/",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "auth",
+                "sessions",
+                ""
+              ]
+            },
+            "description": "Authenticates a user and creates a new session. Returns an access token and refresh token upon successful login. Send user credentials in the request body."
+          },
+          "response": []
+        }
+      ],
+      "description": "Contains all authentication-related endpoints including user login, session management, OTP-based password reset, and token refresh. These requests do not require an authenticated sessions."
+    },
+    {
+      "name": "Task",
+      "item": [
+        {
+          "name": "Get Task Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{URL}}/task/:taskId",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "task",
+                ":taskId"
+              ],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": "26"
+                }
+              ]
+            },
+            "description": "Retrieves the full details of a specific task by its ID, including title, description, status, deadline, and assignees."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{URL}}/task/:taskId",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "task",
+                ":taskId"
+              ],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": "22"
+                }
+              ]
+            },
+            "description": "Permanently deletes a task by its ID. This action is irreversible. Requires appropriate permissions on the task."
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Task to User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{URL}}/task/:taskId/assignees/:memberId",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "task",
+                ":taskId",
+                "assignees",
+                ":memberId"
+              ],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": "26"
+                },
+                {
+                  "key": "memberId",
+                  "value": "3"
+                }
+              ]
+            },
+            "description": "Assigns a specific task to a project member. Requires the task ID and the member ID as path parameters."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Task Assignees",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{URL}}/task/:taskId/assignees",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "task",
+                ":taskId",
+                "assignees"
+              ],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": "26"
+                }
+              ]
+            },
+            "description": "Retrieves the list of users currently assigned to a specific task."
+          },
+          "response": []
+        },
+        {
+          "name": "Unassign Task",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{URL}}/task/:taskId/assignees/:memberId",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "task",
+                ":taskId",
+                "assignees",
+                ":memberId"
+              ],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": "26"
+                },
+                {
+                  "key": "memberId",
+                  "value": "3"
+                }
+              ]
+            },
+            "description": "Removes a specific member from a task's assignee list. Requires the task ID and the member ID as path parameters."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"content\": \"awae\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{URL}}/task/:taskId/comments",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "task",
+                ":taskId",
+                "comments"
+              ],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": "21"
+                }
+              ]
+            },
+            "description": "Adds a new comment to a specific task. Requires the task ID as a path parameter and the comment content in the request body."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Task Comments",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"content\": \"awae\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{URL}}/task/:taskId/comments",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "task",
+                ":taskId",
+                "comments"
+              ],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": "21"
+                }
+              ]
+            },
+            "description": "Retrieves a paginated list of comments for a specific task. Supports pagination via `page` and `limit` query parameters."
+          },
+          "response": []
+        }
+      ],
+      "description": "Contains endpoints for managing individual tasks. Covers retrieving task details, deleting tasks, assigning and unassigning members, and managing task comments. Most endpoints require a valid Bearer token and a task ID as a path parameter."
+    },
+    {
+      "name": "Project",
+      "item": [
+        {
+          "name": "Create Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"name\": \"Project!\"\r\n}\r\n        "
+            },
+            "url": {
+              "raw": "{{URL}}/project",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "project"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Creates a new project. Requires project details such as name and description in the request body. The authenticated user becomes the project owner."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project By ID",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"name\": \"Project!\"\r\n}\r\n        "
+            },
+            "url": {
+              "raw": "{{URL}}/project/:projectId",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "project",
+                ":projectId"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "projectId",
+                  "value": "6"
+                }
+              ]
+            },
+            "description": "Retrieves the full details of a specific project by its ID, including name, description, status, and member information."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Project Info",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"edited\",\r\n    \"description\": \"33241\"\r\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/project/:projectId",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "project",
+                ":projectId"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "projectId",
+                  "value": "6"
+                }
+              ]
+            },
+            "description": "Updates the details of an existing project such as name, description, or status. Only the fields provided in the request body will be updated."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"edited\",\r\n    \"description\": \"33241\"\r\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/project/:projectId",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "project",
+                ":projectId"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "projectId",
+                  "value": "6"
+                }
+              ]
+            },
+            "description": "Permanently deletes a project and all its associated tasks and members. This action is irreversible. Requires admin or owner permissions."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Project Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"role\": \"admin\"\r\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/project/:projectId/members/:memberId",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "project",
+                ":projectId",
+                "members",
+                ":memberId"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "projectId",
+                  "value": "7"
+                },
+                {
+                  "key": "memberId",
+                  "value": "3"
+                }
+              ]
+            },
+            "description": "Adds a user as a member to a specific project. Requires the project ID and the member ID as path parameters."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Members",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{URL}}/project/:projectId/members",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "project",
+                ":projectId",
+                "members"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "projectId",
+                  "value": "7"
+                }
+              ]
+            },
+            "description": "Retrieves the list of all members belonging to a specific project, including their roles."
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Project Member",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{URL}}/project/:projectId/members/:memberId",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "project",
+                ":projectId",
+                "members",
+                ":memberId"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "projectId",
+                  "value": "1"
+                },
+                {
+                  "key": "memberId",
+                  "value": "3"
+                }
+              ]
+            },
+            "description": "Removes a member from a project. Requires the project ID and the member ID as path parameters. Requires admin or owner permissions."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Member Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"role\": \"member\"\r\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/project/:projectId/members/:memberId",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "project",
+                ":projectId",
+                "members",
+                ":memberId"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "projectId",
+                  "value": "7"
+                },
+                {
+                  "key": "memberId",
+                  "value": "3"
+                }
+              ]
+            },
+            "description": "Updates the role of a specific member within a project (e.g., from viewer to editor). Requires the project ID and member ID as path parameters."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Project Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"taskData\": {\r\n        \"title\": \"123\",\r\n        \"description\": \"123\",\r\n        \"deadline\": \"06/08/2026\"\r\n    }\r\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/project/:projectId/tasks",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "project",
+                ":projectId",
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "projectId",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Creates a new task within a specific project. Requires the project ID as a path parameter and task details (title, description, deadline, status) in the request body."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"taskData\":{\r\n        \"title\":\"123\",\r\n        \"description\": \"12333\"\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{URL}}/project/:projectId/tasks/:taskId",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "project",
+                ":projectId",
+                "tasks",
+                ":taskId"
+              ],
+              "variable": [
+                {
+                  "key": "projectId",
+                  "value": "5"
+                },
+                {
+                  "key": "taskId",
+                  "value": "26"
+                }
+              ]
+            },
+            "description": "Updates the details of an existing task within a project. Requires the project ID and task ID as path parameters. Only the fields provided in the request body will be updated."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Tasks",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{URL}}/project/:projectId/tasks",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "project",
+                ":projectId",
+                "tasks"
+              ],
+              "variable": [
+                {
+                  "key": "projectId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Retrieves a paginated list of tasks within a specific project. Supports filtering by status, deadline, and title via query parameters, as well as pagination via `limit` and `page`."
+          },
+          "response": []
+        }
+      ],
+      "description": "Contains endpoints for full project lifecycle management. Includes creating and deleting projects, updating project info, managing project members and their roles, and creating or updating tasks within a project. Most endpoints require a valid Bearer token and a project ID as a path parameter."
+    }
+  ]
+}

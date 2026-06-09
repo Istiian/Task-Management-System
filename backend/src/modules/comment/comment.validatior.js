@@ -1,6 +1,0 @@
-import joi from 'joi';
-
-export const commentSchema = joi.object({
-    content: joi.string().required(),
-    taskId: joi.number().integer().required()
-});
