@@ -25,19 +25,23 @@ router.get('/:taskId/assignees',
 
 // Assign Task to User
 router.post('/:taskId/assignees/:memberId',
+    canAccessTask('owner', 'admin'),
     assignTaskToUserController);
     
 // Unassign Task from User
 router.delete('/:taskId/assignees/:memberId',
+    canAccessTask('owner', 'admin'),
     unassignTaskFromUserController);
 
 // Add Comment to Task
 router.post('/:taskId/comments',
+    canAccessTask('owner', 'admin', 'member'),
     validateForm(commentSchema),
     createCommentController);
 
 // Get Task Comments
 router.get('/:taskId/comments',
+    canAccessTask('owner', 'admin', 'member'),
     getCommentsByTaskIdController);
 
 export default router;
