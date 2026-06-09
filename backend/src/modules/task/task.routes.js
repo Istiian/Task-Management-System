@@ -1,28 +1,43 @@
 import express from 'express';
 import {
-    createTaskController,
-    getTasksController,
-    updateTaskController,
-    deleteTaskController,
     getTaskByIdController,
-    getOverdueTasksController,
-    getUserTasksController,
     assignTaskToUserController,
-    unassignTaskFromUserController
+    unassignTaskFromUserController,
+    createCommentController,
+    getCommentsByTaskIdController,
+    getTaskAssigneesController
 } from './task.controller.js';
 import { validateForm } from '../../middleware/validateForm.js';
-import { createTaskSchema, updateTaskSchema } from './task.validator.js';
+import {commentSchema} from './task.validator.js';
+import {canAccessTask} from '../../middleware/canAccessTask.js';
+
 const router = express.Router();
 
-router.post('/', validateForm(createTaskSchema), createTaskController);
-router.get('/project/:projectId', getTasksController);
-router.get('/assigned', getUserTasksController);
-router.get('/:taskId', getTaskByIdController);
-router.put('/:taskId', validateForm(updateTaskSchema), updateTaskController);
-router.delete('/:taskId', deleteTaskController);
-router.get('/project/:projectId/overdue', getOverdueTasksController);
-router.get('/own', getUserTasksController);
-router.post('/assign/:taskId', assignTaskToUserController);
-router.delete('/unassign/:taskId', unassignTaskFromUserController);
+// get task by Id
+router.get('/:taskId',
+    canAccessTask('owner', 'admin', 'member'),
+    getTaskByIdController);
+
+// get Task Assignees
+router.get('/:taskId/assignees',
+    canAccessTask('owner', 'admin', 'member'),
+    getTaskAssigneesController);
+
+// Assign Task to User
+router.post('/:taskId/assignees/:memberId',
+    assignTaskToUserController);
+    
+// Unassign Task from User
+router.delete('/:taskId/assignees/:memberId',
+    unassignTaskFromUserController);
+
+// Add Comment to Task
+router.post('/:taskId/comments',
+    validateForm(commentSchema),
+    createCommentController);
+
+// Get Task Comments
+router.get('/:taskId/comments',
+    getCommentsByTaskIdController);
 
 export default router;

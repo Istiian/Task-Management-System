@@ -4,147 +4,119 @@ import User from '../../models/user.js';
 import TaskAssignees from '../../models/task_assignees.js';
 import { Op } from 'sequelize';
 import { ApiError } from '../../util/apiError.js';
-
-export const createTask = async ( taskData ) => {
-    const task = await Task.create({
-        title: taskData.title,
-        description: taskData.description,
-        deadline: taskData.deadline,
-        projectId: taskData.projectId,
-    });
-    return task;
-};
-
-export const getTasks = async (projectId, filter) => {
-    const whereClause = { projectId };
-    if (filter && filter.status) {
-        whereClause.status = filter.status;
-    }
-    const tasks = await Task.findAll({
-        where: whereClause,
-        order: [['createdAt', 'DESC']]
-    });
-    return tasks;
-};
-
-export const updateTask = async (taskId, taskData ) => {
-
-    const task = await Task.findByPk(taskId);
-    if (!task) {
-        throw new ApiError(404, 'Task not found');
-    }
-
-    await task.update({
-        title: taskData.title,
-        description: taskData.description,
-        status: taskData.status,
-        deadline: taskData.deadline,
-    });
-    return task;
-};
-
-export const deleteTask = async (taskId) => {
-
-    const task = await Task.findByPk(taskId);
-    if (!task) {
-        throw new ApiError(404, 'Task not found');
-    }
-    await task.destroy();
-};
+import redisClient from '../../../redis.js';
+import { bumpUserTasksCacheVersion } from '../../util/cache.js';
 
 export const getTaskById = async (taskId) => {
+    const cacheKey = `task:${taskId}`;
+    const cachedTask = await redisClient.get(cacheKey);
+    let task;
+    if (cachedTask) {
+        task = JSON.parse(cachedTask);
+    } else {
+        task = await Task.findByPk(taskId, {
+            attributes: ['id', 'title', 'description', 'status', 'deadline', 'createdAt'],
+        });
+        if (task) await redisClient.setEx(cacheKey, 3600, JSON.stringify(task));
+        else throw new ApiError(404, 'Task not found');
+    }
+    return task;
+};
 
-    const task = await Task.findByPk(taskId, {
-        include: [{
-            model: Comment,
-            as: 'comments',
-            attributes: ['id', 'content', 'createdAt'],
-            include: {
-                model: User,
-                as: 'author',
-                attributes: ['id', 'username']
-            }
-        },
-        {
-            model: TaskAssignees,
-            as: 'taskAssignments',
+export const getTaskAssignees = async (taskId) => {
+    const cacheKey = `task:${taskId}:assignees`;
+    const cachedAssignees = await redisClient.get(cacheKey);
+    let assignees;
+    if (cachedAssignees) {
+        assignees = JSON.parse(cachedAssignees);
+    } else {
+        assignees = await TaskAssignees.findAll({
+            where: { taskId },
             include: {
                 model: User,
                 as: 'user',
-                attributes: ['id', 'username']
+                attributes: ['username', 'email']
             }
-        }
-        ]
-    });
+        });
+        await redisClient.setEx(cacheKey, 3600, JSON.stringify(assignees));
+    }
+    return assignees;
+};
+
+
+export const assignTaskToUser = async (taskId, memberId) => {
+    const cacheKey = `task:${taskId}:assignees`;
+
+    const task = await Task.findByPk(taskId);
     if (!task) {
         throw new ApiError(404, 'Task not found');
     }
-    return task;
-};
-
-export const getOverdueTasks = async (projectId) => {
-    const overdueTasks = await Task.findAll({
-        where: {
-            projectId,
-            deadline: {
-                [Op.lt]: new Date()
-            },
-            status: {
-                [Op.ne]: 'completed'
-            }
-        },
-        order: [['deadline', 'ASC']]
-    });
-    return overdueTasks;
-};
-
-export const getUserTasks = async (userId) => {
-    const tasks = await Task.findAll({
-        include: [{
-            model: TaskAssignees,
-            as: 'taskAssignments',
-            where: { userId: Number(userId) },
-            attributes: []
-        }],
-        order: [['createdAt', 'DESC']]
-    });
-    return tasks;
-};
-
-export const assignTaskToUser = async (taskId, userId) => {
-    const task = await Task.findByPk(taskId);
-    if (!task) {
-        throw ApiError(404, 'Task not found');
-    }
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(memberId);
     if (!user) {
-        throw ApiError(404, 'User not found');
+        throw new ApiError(404, 'User not found');
     }
     const existingAssignment = await TaskAssignees.findOne({
         where: {
             taskId,
-            userId
+            userId: memberId
         }
     });
     if (existingAssignment) {
         throw new ApiError(400, 'User is already assigned to this task');
     }
 
+    await redisClient.del(cacheKey);
+    await bumpUserTasksCacheVersion(memberId);
     return await TaskAssignees.create({
         taskId,
-        userId
+        userId: memberId
     });
 };
 
-export const unassignTaskFromUser = async (taskId, userId) => {
+export const unassignTaskFromUser = async (taskId, memberId) => {
+    const cacheKey = `task:${taskId}:assignees`;
     const assignment = await TaskAssignees.findOne({
         where: {
             taskId,
-            userId
+            userId: memberId
         }
     });
     if (!assignment) {
         throw new ApiError(404, 'Assignment not found');
     }
+    await redisClient.del(cacheKey);
+    await bumpUserTasksCacheVersion(memberId);
     await assignment.destroy();
 };
+
+export const createComment = async (content, authorId, taskId) => {
+    const cacheKey = `task:${taskId}:comments`;
+    const comment = await Comment.create({ content, authorId, taskId });
+    await redisClient.del(cacheKey);
+    return comment;
+};
+
+export const getTaskComments = async (taskId, page, limit) => {
+    const cacheKey = `task:${taskId}:comments`;
+    const cachedComments = await redisClient.get(cacheKey);
+    let comments;
+    if (cachedComments) {
+        comments = JSON.parse(cachedComments);
+    } else {
+        comments = await Comment.findAll({
+            where: { taskId },
+            attributes: ['id', 'content', 'createdAt'],
+            include: {
+                model: User,
+                as: 'author',
+                attributes: ['username']
+            },
+            order: [['createdAt', 'ASC']],
+            offset: (page - 1) * limit,
+            limit
+
+        });
+        await redisClient.setEx(cacheKey, 3600, JSON.stringify(comments));
+    }
+    return comments;
+}

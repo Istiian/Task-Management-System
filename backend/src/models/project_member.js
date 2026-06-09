@@ -14,6 +14,7 @@ const ProjectMember = sequelize.define('ProjectMember', {
             model: 'Projects',
             key: 'id',
         },
+        unique:false
     },
     userId: {
         type: DataTypes.INTEGER,
@@ -22,6 +23,7 @@ const ProjectMember = sequelize.define('ProjectMember', {
             model: 'Users',
             key: 'id',
         },
+        unique:false
     },
     role:{
         type: DataTypes.ENUM('admin', 'member'),

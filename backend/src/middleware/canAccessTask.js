@@ -45,7 +45,6 @@ export const canAccessTask = (...roles) => {
             const isApprovedAdmin = roles.includes('admin') && currentRole === 'admin';
             const isApprovedMember = roles.includes('member') && currentRole === 'member';
 
-            // 3. If they do not meet ANY of the approved conditions, throw the error
             if (!isApprovedOwner && !isApprovedAdmin && !isApprovedMember) {
                 throw new ApiError(403, 'Forbidden: You do not have access ');
             }

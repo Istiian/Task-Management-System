@@ -12,14 +12,25 @@ export const updateProjectSchema = joi.object({
 }).min(1);
 
 export const addProjectMemberSchema = joi.object({
-    userId: joi.number().integer().positive().required(),
-});
-
-export const removeProjectMemberSchema = joi.object({
-    userId: joi.number().integer().positive().required(),
+    role: joi.string().valid('admin', 'member').required(),
 });
 
 export const updateProjectMemberRoleSchema = joi.object({
-    userId: joi.number().integer().positive().required(),
-    role: joi.string().valid('admin', 'member').required(),
+   role: joi.string().valid('admin', 'member').required(),
+});
+
+export const createTaskSchema = joi.object({
+    taskData: joi.object({
+        title: joi.string().required(),
+        description: joi.string().optional(),
+        deadline: joi.date().optional(),
+    }).required()
+});
+
+export const updateTaskSchema = joi.object({
+    taskData: joi.object({
+        title: joi.string().optional(),
+        description: joi.string().optional(),
+        deadline: joi.date().optional(),
+    }).required()
 });

@@ -20,7 +20,7 @@ const User = sequelize.define('User', {
     email:{
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
     },
     firstName: {
         type: DataTypes.STRING,
@@ -30,6 +30,18 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
     }
-});
+},{
+    indexes: [
+        {
+            unique: true,
+            fields: ['username']
+        },
+        {
+            unique: true,
+            fields: ['email']
+        }
+    ]
+}
+);
 
 export default User;

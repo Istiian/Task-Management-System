@@ -41,5 +41,8 @@ ProjectMembers.belongsTo(Project, { as: 'project', foreignKey: 'projectId' });
 User.hasMany(ProjectMembers, { as: 'projectMemberships', foreignKey: 'userId' });
 Project.hasMany(ProjectMembers, { as: 'projectMemberships', foreignKey: 'projectId' });
 
+// Project-User (One-to-Many for ownership)
+Project.belongsTo(User, { as: 'owner', foreignKey: 'ownerId' });
+User.hasMany(Project, { as: 'ownedProjects', foreignKey: 'ownerId' });
 export { User, Task, Project, Comment, TaskAssignees, ProjectMembers };
 

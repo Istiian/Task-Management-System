@@ -11,7 +11,7 @@ passport.use(new JWTStrategy(opts, async (payload, done) => {
     try {
         const user = await User.findByPk(payload.id);
         if (user) {
-            return done(null, { id: user.id });
+            return done(null, { id: payload.id});
         }
         return done(null, false);
     } catch (error) {

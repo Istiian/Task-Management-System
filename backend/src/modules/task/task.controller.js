@@ -1,73 +1,11 @@
 import {
-    createTask, 
-    getTasks, 
     getTaskById,
-    updateTask, 
-    deleteTask,
-    getOverdueTasks,
-    getUserTasks,
+    getTaskAssignees,
     assignTaskToUser,
-    unassignTaskFromUser
+    unassignTaskFromUser,
+    createComment,
+    getTaskComments
 } from './task.service.js';
-
-export const createTaskController = async (req, res, next) => {
-    try{
-        const taskData = req.body;
-        const task = await createTask(taskData);
-
-        res.status(201).json({
-            success: true,
-            message: 'Task created successfully',
-            task
-        });
-    } catch (error) {
-        next(error);
-    }
-}
-
-export const getTasksController = async (req, res, next) => {
-    try {
-        const projectId = req.params.projectId;
-        const filter = req.query; // e.g., ?status=pending
-        const tasks = await getTasks(projectId, filter);
-        res.status(200).json({
-            success: true,
-            message: 'Tasks fetched successfully',
-            tasks
-        });
-    } catch (error) {
-        next(error);
-    }
-}
-
-export const updateTaskController = async (req, res, next) => {
-    try {
-        const taskId = req.params.taskId;
-        const taskData = req.body;
-        
-        const task = await updateTask(taskId, taskData);
-        res.status(200).json({
-            success: true,
-            message: 'Task updated successfully',
-            task
-        });
-    } catch (error) {
-        next(error);
-    }
-}
-
-export const deleteTaskController = async (req, res, next) => {
-    try {
-        const taskId = req.params.taskId;
-        await deleteTask(taskId);
-        res.status(200).json({
-            success: true,
-            message: 'Task deleted successfully'
-        });
-    } catch (error) {
-        next(error);
-    }
-}
 
 export const getTaskByIdController = async (req, res, next) => {
     try {
@@ -85,28 +23,14 @@ export const getTaskByIdController = async (req, res, next) => {
     }
 }
 
-export const getOverdueTasksController = async (req, res, next) => {
+export const getTaskAssigneesController = async (req, res, next) => {
     try {
-        const projectId = req.params.projectId;
-        const overdueTasks = await getOverdueTasks(projectId);
+        const taskId = req.params.taskId;
+        const assignees = await getTaskAssignees(taskId);
         res.status(200).json({
             success: true,
-            message: 'Overdue tasks fetched successfully',
-            overdueTasks
-        });
-    } catch (error) {
-        next(error);
-    }
-}
-
-export const getUserTasksController = async (req, res, next) => {
-    try {
-        const userId = req.user.id; // Assuming user ID is available in req.user
-        const tasks = await getUserTasks(userId);
-        res.status(200).json({
-            success: true,
-            message: 'User tasks fetched successfully',
-            tasks
+            message: 'Task assignees fetched successfully',
+            assignees
         });
     } catch (error) {
         next(error);
@@ -116,8 +40,8 @@ export const getUserTasksController = async (req, res, next) => {
 export const assignTaskToUserController = async (req, res, next) => {
     try {
         const taskId = req.params.taskId;
-        const { userId } = req.body;
-        await assignTaskToUser(taskId, userId);
+        const memberId = req.params.memberId;
+        await assignTaskToUser(taskId, memberId);
         res.status(200).json({
             success: true,
             message: 'Task assigned to user successfully'
@@ -130,11 +54,43 @@ export const assignTaskToUserController = async (req, res, next) => {
 export const unassignTaskFromUserController = async (req, res, next) => {
     try {
         const taskId = req.params.taskId;
-        const { userId } = req.body;
-        await unassignTaskFromUser(taskId, userId);
+        const memberId = req.params.memberId;
+        await unassignTaskFromUser(taskId, memberId);
         res.status(200).json({
             success: true,
             message: 'Task unassigned from user successfully'
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const createCommentController = async (req, res, next) => {
+    const {content} = req.body;
+    const authorId = req.user.id;
+    const taskId = req.params.taskId;
+    try {
+        const comment = await createComment(content, authorId, taskId);
+        res.status(201).json({
+            success: true,
+            message: 'Comment created successfully',
+            comment
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getCommentsByTaskIdController = async (req, res, next) => {
+    const taskId = req.params.taskId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    try {
+        const comments = await getTaskComments(taskId, page, limit);
+        res.status(200).json({
+            success: true,
+            message: 'Comments fetched successfully',
+            comments
         });
     } catch (error) {
         next(error);
