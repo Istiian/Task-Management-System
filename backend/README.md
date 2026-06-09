@@ -1,4 +1,4 @@
-# Personal Task Tracker — Backend
+# Task Management System — Backend
 
 A RESTful API for managing projects, tasks, team members, and comments. Built with **Node.js**, **Express**, **PostgreSQL** (via Sequelize ORM), and **Redis** for caching and OTP storage.
 

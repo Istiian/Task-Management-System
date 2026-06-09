@@ -1,6 +1,6 @@
-# Personal Task Tracker
+# Task Management Tracker
 
-A personal task management system for organizing projects, tasks, and team collaboration.
+A task management system for organizing projects, tasks, and team collaboration.
 
 ## Structure
 
