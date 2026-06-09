@@ -10,6 +10,7 @@ A RESTful API for managing projects, tasks, team members, and comments. Built wi
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
+- [Testing with Postman](#testing-with-postman)
 - [API Reference](#api-reference)
   - [Auth](#auth)
   - [User](#user)
@@ -152,6 +153,22 @@ EMAIL_PASS=yourpassword
 # CORS
 CLIENT_URL=http://localhost:5173
 ```
+
+---
+
+## Testing with Postman
+
+A Postman collection covering all API routes is included in the backend root:
+
+```
+backend/Task Management System.postman_collection.json
+```
+
+To use it:
+1. Open Postman and click **Import**.
+2. Select `Task Management System.postman_collection.json`.
+3. Set the `baseUrl` collection variable to your server URL (e.g., `http://localhost:3000`).
+4. Run the **Login** request first — the collection uses the returned `accessToken` for authenticated requests.
 
 ---
 
